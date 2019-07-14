@@ -19,6 +19,22 @@ suite('Functional Tests', function() {
     
     suite('POST', function() {
       
+      test('create 2 new threads(because we end up deleting 1 in the delete test)', function(done) {
+        chai.request(server)
+        .post('/api/threads/fcc')
+        .send({text:'test 1', delete_password:'pass'})
+        .end(function(err, res){
+          assert.equal(res.status, 200);
+        });
+        chai.request(server)
+        .post('/api/threads/fcc')
+        .send({text:'test 2', delete_password:'pass'})
+        .end(function(err, res){ 
+          assert.equal(res.status, 200);
+          done();
+        });
+      });
+      
     });
     
     suite('GET', function() {
