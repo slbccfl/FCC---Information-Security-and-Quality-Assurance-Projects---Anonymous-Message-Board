@@ -18,8 +18,8 @@ module.exports = function (app) {
   var replyHandler = new ReplyHandler();
   
   app.route('/api/threads/:board')
-    // .get(threadHandler.threadList)
-    // .post(threadHandler.newThread)
+    .get(threadHandler.threadList)
+    .post(threadHandler.newThread)
     // .put(threadHandler.reportThread)
     // .delete(threadHandler.deleteThread);
     
