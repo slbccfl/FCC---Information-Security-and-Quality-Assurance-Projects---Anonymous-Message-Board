@@ -24,8 +24,8 @@ module.exports = function (app) {
     // .delete(threadHandler.deleteThread);
     
   app.route('/api/replies/:board')
-    // .get(replyHandler.replyList)
-    // .post(replyHandler.newReply)
+    .get(replyHandler.replyList)
+    .post(replyHandler.newReply)
     // .put(replyHandler.reportReply)
     // .delete(replyHandler.deleteReply);
 
