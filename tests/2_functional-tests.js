@@ -26,13 +26,13 @@ suite('Functional Tests', function() {
       test('create 2 new threads(because we end up deleting 1 in the delete test)', function(done) {
         chai.request(server)
         .post('/api/threads/fcc')
-        .send({text:testId1, delete_password:'pass'})
+        .send({text:'test text first threads POST', delete_password:'pass'})
         .end(function(err, res){
           assert.equal(res.status, 200);
         });
         chai.request(server)
         .post('/api/threads/fcc')
-        .send({text:testId2, delete_password:'pass'})
+        .send({text:'test text second threads POST', delete_password:'pass'})
         .end(function(err, res){ 
           assert.equal(res.status, 200);
           done();
@@ -83,9 +83,40 @@ suite('Functional Tests', function() {
     
     suite('POST', function() {
       
+      test('reply to thread', function(done) {
+        chai.request(server)
+        .post('/api/replies/fcc')
+        .send({thread_id: testId2, text:'test text, reply to testId2', delete_password:'pass'})
+        .end(function(err, res){ 
+          assert.equal(res.status, 200);
+          done();
+        });
+      });
+      
     });
     
     suite('GET', function() {
+      
+      test('Get all replies for 1 thread', function(done) {
+        chai.request(server)
+        .get('/api/replies/fcc')
+        .query({thread_id: testId2})
+        .end(function(err, res){
+          assert.equal(res.status, 200);
+          assert.property(res.body, '_id');
+          assert.property(res.body, 'created_on');
+          assert.property(res.body, 'bumped_on');
+          assert.property(res.body, 'text');
+          assert.property(res.body, 'replies');
+          assert.notProperty(res.body, 'delete_password');
+          assert.notProperty(res.body, 'reported');
+          assert.isArray(res.body.replies);
+          assert.notProperty(res.body.replies[0], 'delete_password');
+          assert.notProperty(res.body.replies[0], 'reported');
+          assert.equal(res.body.replies[res.body.replies.length-1].text, 'test text, reply to testId2');
+          done();
+        });
+      });
       
     });
     
