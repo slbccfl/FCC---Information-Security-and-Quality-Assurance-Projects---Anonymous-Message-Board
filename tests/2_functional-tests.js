@@ -70,9 +70,42 @@ suite('Functional Tests', function() {
     
     suite('DELETE', function() {
       
+      test('delete thread with good password', function(done) {
+        chai.request(server)
+        .delete('/api/threads/fcc')
+        .send({thread_id:testId1, delete_password:'pass'})
+        .end(function(err, res){
+          assert.equal(res.status, 200);
+          assert.equal(res.text, 'success');
+          done();
+        });
+      });
+      
+      test('delete thread with bad password', function(done) {
+        chai.request(server)
+        .delete('/api/threads/fcc')
+        .send({thread_id: testId2, delete_password: 'wrong'})
+        .end(function(err, res){
+          assert.equal(res.status, 200);
+          assert.equal(res.text, 'incorrect password');
+          done();
+        });
+      });
+      
     });
     
     suite('PUT', function() {
+      
+      test('report thread', function(done) {
+        chai.request(server)
+        .put('/api/threads/fcc')
+        .send({report_id:testId2})
+        .end(function(err, res){
+          assert.equal(res.status, 200);
+          assert.equal(res.text, 'reported');
+          done();
+        });
+      });
       
     });
     
@@ -102,6 +135,7 @@ suite('Functional Tests', function() {
         .get('/api/replies/fcc')
         .query({thread_id: testId2})
         .end(function(err, res){
+          // console.log('res.body: ' + JSON.stringify(res.body));
           assert.equal(res.status, 200);
           assert.property(res.body, '_id');
           assert.property(res.body, 'created_on');
@@ -122,9 +156,42 @@ suite('Functional Tests', function() {
     
     suite('PUT', function() {
       
+      test('report reply', function(done) {
+        chai.request(server)
+        .put('/api/replies/fcc')
+        .send({thread_id:testId2 ,reply_id:testId2})
+        .end(function(err, res){
+          assert.equal(res.status, 200);
+          assert.equal(res.text, 'reported');
+          done();
+        });
+      });
+      
     });
     
-    suite('DELETE', function() {
+    suite('DELETE', function() { 
+      
+      test('delete reply with bad password', function(done) {
+        chai.request(server)
+        .delete('/api/replies/fcc')
+        .send({thread_id: testId2 ,reply_id: testId3, delete_password: 'wrong'})
+        .end(function(err, res){
+          assert.equal(res.status, 200);
+          assert.equal(res.text, 'incorrect password');
+          done();
+        });
+      });
+      
+      test('delete reply with valid password', function(done) {
+        chai.request(server)
+        .delete('/api/replies/fcc')
+        .send({thread_id: testId2 ,reply_id: testId3, delete_password: 'pass'})
+        .end(function(err, res){
+          assert.equal(res.status, 200);
+          assert.equal(res.text, 'success');
+          done();
+        });
+      });
       
     });
     
