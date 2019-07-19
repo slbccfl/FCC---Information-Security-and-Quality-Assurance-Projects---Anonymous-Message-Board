@@ -48,6 +48,41 @@ function ThreadHandler() {
     });
   };
   
+  this.reportThread = function(req, res) {
+    var board = req.params.board;
+    mongo.connect(url,function(err,db) {
+      var collection = db.collection(board);
+      collection.findAndModify(
+        {_id: new ObjectId(req.body.report_id)},
+        [],
+        {$set: {reported: true}});
+    });
+    res.send('reported');
+  };
+  
+  this.deleteThread = function(req, res) {
+    var board = req.params.board;
+    mongo.connect(url,function(err,db) {
+      var collection = db.collection(board);
+      collection.findAndModify(
+        {
+          _id: new ObjectId(req.body.thread_id),
+          delete_password: req.body.delete_password
+        },
+        [],
+        {},
+        {remove: true, new: false},
+        function(err, doc){
+          if (doc.value === null) {
+            res.send('incorrect password');
+          } else {
+            res.send('success');
+          }
+        });
+        
+    });
+  };
+  
 }
 
 module.exports = ThreadHandler;
