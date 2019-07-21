@@ -4,6 +4,7 @@ var url = process.env.DB;
 
 function ThreadHandler() {
   this.newThread = function(req, res) { 
+      // console.log('req.body: ' + JSON.stringify(req.body))
     var board = req.params.board;
     var thread = {
       text: req.body.text,
@@ -64,6 +65,7 @@ function ThreadHandler() {
     var board = req.params.board;
     mongo.connect(url,function(err,db) {
       var collection = db.collection(board);
+      // console.log('req.body: ' + JSON.stringify(req.body))
       collection.findAndModify(
         {
           _id: new ObjectId(req.body.thread_id),
@@ -73,6 +75,7 @@ function ThreadHandler() {
         {},
         {remove: true, new: false},
         function(err, doc){
+          // console.log('doc: ' + JSON.stringify(doc))
           if (doc.value === null) {
             res.send('incorrect password');
           } else {
