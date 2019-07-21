@@ -15,13 +15,13 @@ chai.use(chaiHttp);
 
 suite('Functional Tests', function() {
   
-  var testId1 = 'testId1'; //_id of thread 1 created
-  var testId2 = 'testId2'; //_id of thread 2 created
-  var testId3 = 'testId3'; //_id of reply created
+  var testId1; //_id of thread 1 created
+  var testId2; //_id of thread 2 created
+  var testId3; //_id of reply created
 
   suite('API ROUTING FOR /api/threads/:board', function() {
     
-    suite('POST', function() {
+    suite('POST', function() { 
       
       test('create 2 new threads(because we end up deleting 1 in the delete test)', function(done) {
         chai.request(server)
@@ -47,6 +47,7 @@ suite('Functional Tests', function() {
         chai.request(server)
         .get('/api/threads/fcc')
         .end(function(err, res){
+          // console.log('res.body: ' + JSON.stringify(res.body));
           assert.equal(res.status, 200);
           assert.isArray(res.body);
           assert.isBelow(res.body.length, 11);
@@ -148,6 +149,7 @@ suite('Functional Tests', function() {
           assert.notProperty(res.body.replies[0], 'delete_password');
           assert.notProperty(res.body.replies[0], 'reported');
           assert.equal(res.body.replies[res.body.replies.length-1].text, 'test text, reply to testId2');
+          testId3 = res.body.replies[0]._id;
           done();
         });
       });
@@ -182,7 +184,7 @@ suite('Functional Tests', function() {
         });
       });
       
-      test('delete reply with valid password', function(done) {
+      test('delete reply with valid password', function(done) { 
         chai.request(server)
         .delete('/api/replies/fcc')
         .send({thread_id: testId2 ,reply_id: testId3, delete_password: 'pass'})

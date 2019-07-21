@@ -64,11 +64,17 @@ function ReplyHandler() {
     var board = req.params.board;
     mongo.connect(url,function(err,db) {
       var collection = db.collection(board);
-      collection.findAndModify(
+      // console.log('req.body: ' + JSON.stringify(req.body))
+      // console.log('req.body.thread_id: ' + req.body.thread_id)
+      // console.log('req.body.reply_id: ' + req.body.reply_id)
+      let replyObjectId = new ObjectId(req.body.reply_id)
+      // console.log('new ObjectId(req.body.reply_id): ' + replyObjectId) 
+      // console.log('req.body.delete_password: ' + req.body.delete_password) 
+      collection.findAndModify(  
         {
           _id: new ObjectId(req.body.thread_id),
           replies: { $elemMatch: { _id: new ObjectId(req.body.reply_id), delete_password: req.body.delete_password } },
-        },
+        }, 
         [],
         { $set: { "replies.$.text": "[deleted]" } },
         function(err, doc) {
